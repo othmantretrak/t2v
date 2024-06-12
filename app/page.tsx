@@ -6,6 +6,7 @@ import AudioUpload from "./components/AudioUpload";
 import VideoSearch from "./components/VideoSearch";
 import SceneTimer from "./components/SceneTimer";
 import VideoGenerator from "./components/VideoGenerator";
+import NoSSRWrapper from "./components/NoSSRWrapper";
 
 const Storyboard: React.FC = () => {
   const speechRate = 150; // Words per minute
@@ -20,33 +21,35 @@ const Storyboard: React.FC = () => {
 
   console.log({ scenes });
   return (
-    <div className="text-gray-500">
-      <div className="flex">
-        <div>
-          <TextInput updateScenes={setScenes} speechRate={speechRate} />
-          <AudioUpload audioFile={audioFile} setAudioFile={setAudioFile} />
-        </div>
-        <VideoSearch scenes={scenes} updateScene={updateScene} />
-      </div>
-      <div className="flex">
-        {scenes.map((scene, index) => (
-          <div className=" mt-4" key={index}>
-            {scene.videoUrl && (
-              <div className="w-72 ">
-                <video src={scene.videoUrl} controls />
-              </div>
-            )}
-            <SceneTimer
-              paragraph={scene.paragraph}
-              speechRate={speechRate}
-              //startTime={scene.startTime}
-              //endTime={scene.endTime}
-            />
+    <NoSSRWrapper>
+      <div className="text-gray-500">
+        <div className="flex">
+          <div>
+            <TextInput updateScenes={setScenes} speechRate={speechRate} />
+            <AudioUpload audioFile={audioFile} setAudioFile={setAudioFile} />
           </div>
-        ))}
-      </div>
-      <VideoGenerator scenes={scenes} audioFile={audioFile} />
-    </div>
+          <VideoSearch scenes={scenes} updateScene={updateScene} />
+        </div>
+        <div className="flex">
+          {scenes.map((scene, index) => (
+            <div className=" mt-4" key={index}>
+              {scene.videoUrl && (
+                <div className="w-72 ">
+                  <video src={scene.videoUrl} controls />
+                </div>
+              )}
+              <SceneTimer
+                paragraph={scene.paragraph}
+                speechRate={speechRate}
+                //startTime={scene.startTime}
+                //endTime={scene.endTime}
+              />
+            </div>
+          ))}
+        </div>
+        <VideoGenerator scenes={scenes} audioFile={audioFile} />
+      </div>{" "}
+    </NoSSRWrapper>
   );
 };
 
