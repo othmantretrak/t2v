@@ -32,7 +32,9 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = ({
     const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
     const ffmpeg = ffmpegRef.current;
     ffmpeg.on("log", ({ message }: { message: string }) => {
-      if (messageRef.current) messageRef.current.innerHTML = message;
+      if (messageRef.current) {
+        messageRef.current.innerText += message;
+      }
     });
     await ffmpeg.load({
       coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, "text/javascript"),
@@ -78,14 +80,16 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = ({
             "-i",
             video.filename,
             "-t",
-            `${video.endTime}`,
+            `${video.endTime + 0.8}`,
+            "-c",
+            "copy",
             `trimmed_${video.filename}`,
           ]);
         })
       );
 
       const fileList = videoPaths
-        .map((video) => `file 'trimmed_${video.filename}'`)
+        .map((video, index) => `file 'trimmed_video${index}.mp4'`)
         .join("\n");
 
       setProgressMessage("Creating file list for concatenation...");
@@ -108,7 +112,7 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = ({
         "-i",
         "audio.mp3",
         "-c:v",
-        "libx264",
+        "copy", // Copy the video codec without re-encoding
         "-c:a",
         "aac",
         "-strict",
@@ -161,8 +165,18 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = ({
           </video>
         </div>
       )}
+      <p ref={messageRef} />
     </div>
   );
 };
+function formatTime(seconds: any) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  return `${hours.toString().padStart(2, "0")}:${minutes
+    .toString()
+    .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
+}
 
 export default VideoGenerator;

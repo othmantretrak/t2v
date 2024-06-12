@@ -9,7 +9,7 @@ import VideoGenerator from "./components/VideoGenerator";
 import NoSSRWrapper from "./components/NoSSRWrapper";
 
 const Storyboard: React.FC = () => {
-  const speechRate = 150; // Words per minute
+  const speechRate = 145; // Words per minute
   const [scenes, setScenes] = useState<Scene[]>([]);
   const [audioFile, setAudioFile] = useState<File | null>(null); // useState( );
 

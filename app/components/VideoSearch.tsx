@@ -16,7 +16,7 @@ const VideoSearch: React.FC<VideoSearchProps> = ({ scenes, updateScene }) => {
     const results: Video[] = [
       {
         id: "1",
-        url: "https://media.gettyimages.com/id/1483768736/video/new-dad-holding-sleeping-baby-and-swaying-gently.mp4?s=mp4-640x640-gi&k=20&c=Iknz-AXs6Tptn8Jap7rFN6_pYjx8pT7qLon5tbdQ6z0=",
+        url: "https://media.gettyimages.com/id/1954017652/video/shot-father-holding-daughter-while-picking-up-prescription.mp4?s=lwf&w=0&k=20&c=PLLh14CVWAAU9G7POrz7wkRlHAnUBFe0O8OBRK1xTQ0=",
         title: "zwaj litihal tagost Video 1",
         thumbnail: "/thum1.jpeg",
       },
