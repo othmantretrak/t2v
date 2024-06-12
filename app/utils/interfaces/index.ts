@@ -1,3 +1,4 @@
+
 export interface Video {
     id: string;
     url: string;
@@ -7,7 +8,7 @@ export interface Video {
 
 export interface Scene {
     paragraph: string;
-    video?: Video;
+    videoUrl: string;
     startTime: number;
     endTime: number;
 }

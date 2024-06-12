@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 
-const AudioUpload = () => {
-  const [audioFile, setAudioFile] = useState<File | null>(null); // useState( );
-
+const AudioUpload = ({
+  setAudioFile,
+  audioFile,
+}: {
+  setAudioFile: React.Dispatch<React.SetStateAction<File | null>>;
+  audioFile: File | null;
+}) => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = (e.target.files && e.target.files[0]) || null;
     if (!file) return;

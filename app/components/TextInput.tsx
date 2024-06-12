@@ -21,6 +21,7 @@ const TextInput: React.FC<TextInputProps> = ({ updateScenes, speechRate }) => {
         paragraph,
         startTime,
         endTime,
+        videoUrl: "",
       };
     });
     updateScenes(scenes);

@@ -1,24 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createFFmpeg } from "@ffmpeg/ffmpeg";
 
-const VideoDownload = ({ videoBlob }: { videoBlob: Blob }) => {
-  const [downloading, setDownloading] = useState(false);
+const VideoGenerator = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleDownload = () => {
-    setDownloading(true);
-    const url = URL.createObjectURL(videoBlob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "storyboard.mp4";
-    link.click();
-    URL.revokeObjectURL(url);
-    setDownloading(false);
-  };
+  useEffect(() => {
+    const loadFFmpeg = async () => {
+      if (typeof SharedArrayBuffer === "undefined") {
+        setErrorMessage(
+          "SharedArrayBuffer is not supported in this environment."
+        );
+        return;
+      }
+      try {
+        const ffmpegInstance = createFFmpeg({ log: true });
+        await ffmpegInstance.load();
+        console.log("FFmpeg loaded successfully");
+      } catch (error: any) {
+        setErrorMessage(`Error loading FFmpeg: ${error.message}`);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadFFmpeg();
+  }, []);
 
   return (
-    <button onClick={handleDownload} disabled={downloading}>
-      {downloading ? "Downloading..." : "Download Video"}
-    </button>
+    <div>
+      {isLoading && <p>Loading FFmpeg...</p>}
+      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+    </div>
   );
 };
 
-export default VideoDownload;
+export default VideoGenerator;
