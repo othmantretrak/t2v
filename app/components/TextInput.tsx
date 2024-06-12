@@ -36,6 +36,7 @@ const TextInput: React.FC<TextInputProps> = ({ updateScenes, speechRate }) => {
   return (
     <div>
       <textarea
+        className="w-full h-full px-4"
         value={text}
         onChange={handleTextChange}
         rows={10}

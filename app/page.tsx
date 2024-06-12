@@ -22,33 +22,35 @@ const Storyboard: React.FC = () => {
   console.log({ scenes });
   return (
     <NoSSRWrapper>
-      <div className="text-gray-500">
-        <div className="flex">
-          <div>
+      <div className="flex text-gray-500">
+        <div className="flex w-1/2">
+          <div className="text-input w-full">
             <TextInput updateScenes={setScenes} speechRate={speechRate} />
             <AudioUpload audioFile={audioFile} setAudioFile={setAudioFile} />
           </div>
+        </div>
+        <div className="flex flex-col">
           <VideoSearch scenes={scenes} updateScene={updateScene} />
+          <div className="flex">
+            {scenes.map((scene, index) => (
+              <div className=" mt-4" key={index}>
+                {scene.videoUrl && (
+                  <div className="w-72 ">
+                    <video src={scene.videoUrl} controls />
+                  </div>
+                )}
+                <SceneTimer
+                  paragraph={scene.paragraph}
+                  speechRate={speechRate}
+                  //startTime={scene.startTime}
+                  //endTime={scene.endTime}
+                />
+              </div>
+            ))}
+          </div>
+          <VideoGenerator scenes={scenes} audioFile={audioFile} />
         </div>
-        <div className="flex">
-          {scenes.map((scene, index) => (
-            <div className=" mt-4" key={index}>
-              {scene.videoUrl && (
-                <div className="w-72 ">
-                  <video src={scene.videoUrl} controls />
-                </div>
-              )}
-              <SceneTimer
-                paragraph={scene.paragraph}
-                speechRate={speechRate}
-                //startTime={scene.startTime}
-                //endTime={scene.endTime}
-              />
-            </div>
-          ))}
-        </div>
-        <VideoGenerator scenes={scenes} audioFile={audioFile} />
-      </div>{" "}
+      </div>
     </NoSSRWrapper>
   );
 };
