@@ -4,6 +4,7 @@ export interface Video {
     url: string;
     title: string;
     thumbnail: string;
+    duration: string;
 }
 
 export interface Scene {
