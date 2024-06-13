@@ -5,6 +5,7 @@ import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
 import { useEffect, useRef, useState } from "react";
 import { Scene } from "../utils/interfaces";
+import { isImageUrl } from "../utils/timing";
 
 interface VideoGeneratorProps {
   scenes: Scene[];
@@ -63,33 +64,34 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = ({
     try {
       setProgressMessage("Downloading and processing videos...");
 
-      const videoPaths = scenes.map((scene, index) => ({
-        url: scene.videoUrl,
-        filename: `video${index}.mp4`,
-        endTime: scene.endTime,
-      }));
-
-      await Promise.all(
-        videoPaths.map(async (video) => {
-          setProgressMessage(`Downloading video: ${video.url}`);
-          const response = await fetch(video.url);
+      const videoPaths = await Promise.all(
+        scenes.map(async (scene, index) => {
+          const filename = `video${index}.mp4`;
+          const response = await fetch(scene.videoUrl);
           const data = await response.arrayBuffer();
-          await ffmpeg.writeFile(video.filename, new Uint8Array(data));
-          setProgressMessage(`Trimming video: ${video.filename}`);
+          await ffmpeg.writeFile(filename, new Uint8Array(data));
+
+          setProgressMessage(`Trimming video: ${filename}`);
           await ffmpeg.exec([
             "-i",
-            video.filename,
+            filename,
             "-t",
-            `${video.endTime + 0.8}`,
+            `${scene.endTime + 0.8}`,
             "-c",
             "copy",
-            `trimmed_${video.filename}`,
+            `trimmed_${filename}`,
           ]);
+
+          return {
+            url: scene.videoUrl,
+            filename: `trimmed_${filename}`,
+            endTime: scene.endTime,
+          };
         })
       );
 
       const fileList = videoPaths
-        .map((video, index) => `file 'trimmed_video${index}.mp4'`)
+        .map((video) => `file '${video.filename}'`)
         .join("\n");
 
       setProgressMessage("Creating file list for concatenation...");
@@ -169,6 +171,7 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = ({
     </div>
   );
 };
+
 function formatTime(seconds: any) {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);

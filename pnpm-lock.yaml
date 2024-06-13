@@ -17,6 +17,12 @@ dependencies:
   axios:
     specifier: ^1.7.2
     version: 1.7.2
+  gifshot:
+    specifier: ^0.4.5
+    version: 0.4.5
+  jsmpeg:
+    specifier: ^1.0.0
+    version: 1.0.0
   next:
     specifier: 14.2.3
     version: 14.2.3(react-dom@18.0.0)(react@18.0.0)
@@ -26,6 +32,9 @@ dependencies:
   react-dom:
     specifier: ^18
     version: 18.0.0(react@18.0.0)
+  ts-whammy:
+    specifier: ^1.1.5
+    version: 1.1.5
 
 devDependencies:
   '@types/node':
@@ -1450,6 +1459,10 @@ packages:
       resolve-pkg-maps: 1.0.0
     dev: true
 
+  /gifshot@0.4.5:
+    resolution: {integrity: sha512-oaOTT7patjxFFv7ptR0R0NNhqy3ZAmcLUQCjM/sTsvsQaUAlB2fHirLajcNAKJ6ufoVhdP+ZkXYvmUycHP1FNg==}
+    dev: false
+
   /glob-parent@5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
     engines: {node: '>= 6'}
@@ -1853,6 +1866,10 @@ packages:
     dependencies:
       argparse: 2.0.1
     dev: true
+
+  /jsmpeg@1.0.0:
+    resolution: {integrity: sha512-wlBKWVJ93NRJaCfrJ1KAgpMvZBLzpZxH3wnC1Yj7DudMDa/5hHeL1HfvW48ndR8GlI4irrqCXuOGhgayP9EbHw==}
+    dev: false
 
   /json-buffer@3.0.1:
     resolution: {integrity: sha512-4bV5BfR2mqfQTJm+V5tPPdf+ZpuhiIvTuAB5g8kcrXOZpTT/QwwVRWBywX1ozr6lEuPdbHxwaJlm9G6mI2sfSQ==}
@@ -2748,6 +2765,12 @@ packages:
   /ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
     dev: true
+
+  /ts-whammy@1.1.5:
+    resolution: {integrity: sha512-sgQNdEPFYvVW9XGPr6S410SBqNaMyjzzLfvjhXJT8Ani0L2r4QodC8mMU/N6hBV3YEP/iSaNqC18jEzCINDMSA==}
+    dependencies:
+      tslib: 2.6.3
+    dev: false
 
   /tsconfig-paths@3.15.0:
     resolution: {integrity: sha512-2Ac2RgzDe/cn48GvOe3M+o82pEFewD3UPbyoUHHdKasHwJKjds4fLXWf/Ux5kATBKN20oaFGu+jbElp1pos0mg==}
