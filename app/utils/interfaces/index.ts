@@ -9,7 +9,6 @@ export interface Video {
 
 export interface Scene {
     paragraph: string;
-    videoUrl: string;
-    startTime: number;
-    endTime: number;
+    videoUrlOrImageFile: string | File
+    duration: number;
 }

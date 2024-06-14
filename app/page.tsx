@@ -5,10 +5,9 @@ import TextInput from "./components/TextInput";
 import AudioUpload from "./components/AudioUpload";
 import VideoSearch from "./components/VideoSearch";
 import SceneTimer from "./components/SceneTimer";
-import VideoGenerator from "./components/VideoGenerator";
 import NoSSRWrapper from "./components/NoSSRWrapper";
 import UploadImages from "./components/UploadImages";
-import { isImageUrl } from "./utils/timing";
+import { getVideoUrl, isImageUrl } from "./utils/timing";
 
 const Storyboard: React.FC = () => {
   const speechRate = 145; // Words per minute
@@ -23,12 +22,53 @@ const Storyboard: React.FC = () => {
 
   console.log({ scenes });
 
-  const handleAddScene = (sceneIndex: number, imageUrl: string) => {
+  const handleAddScene = (sceneIndex: number, imageUrl: string | File) => {
     const updatedScene: Scene = {
       ...scenes[sceneIndex],
-      videoUrl: imageUrl,
+      videoUrlOrImageFile: imageUrl,
     };
     updateScene(sceneIndex, updatedScene);
+  };
+  const handleGenerateVideo = async () => {
+    // Create a FormData instance
+    const formData = new FormData();
+
+    // Append scenes to the FormData
+    formData.append("scenes", JSON.stringify(scenes));
+
+    // Append audioFile to the FormData
+    if (audioFile) {
+      formData.append("audioFile", audioFile);
+    }
+
+    // Append videoFiles to the FormData
+    scenes.forEach((scene, index) => {
+      if (scene.videoUrlOrImageFile instanceof File) {
+        formData.append(`imageFile-${index}`, scene.videoUrlOrImageFile);
+      }
+    });
+
+    try {
+      // Send FormData to backend using fetch API
+      const response = await fetch("http://localhost:5000/merge-videos", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Error generating video");
+      }
+
+      const responseData = await response.json();
+      console.log("Merged video URL:", responseData.videoUrlOrImageFile);
+
+      // Handle successful response (e.g., display generated video URL)
+      // ...
+    } catch (error) {
+      console.error("Error sending data:", error);
+      // Handle errors (e.g., display error message)
+      // ...
+    }
   };
   return (
     <NoSSRWrapper>
@@ -46,10 +86,11 @@ const Storyboard: React.FC = () => {
             {scenes.map((scene, index) => {
               return (
                 <div className=" mt-4" key={index}>
-                  {scene.videoUrl && !isImageUrl(scene.videoUrl) ? (
+                  {scene.videoUrlOrImageFile &&
+                  !isImageUrl(scene.videoUrlOrImageFile) ? (
                     <div className="w-72 h-72  ">
                       <video
-                        src={scene.videoUrl}
+                        src={getVideoUrl(scene.videoUrlOrImageFile)}
                         controls
                         className="w-full "
                         style={{ height: "inherit" }}
@@ -57,7 +98,7 @@ const Storyboard: React.FC = () => {
                     </div>
                   ) : (
                     <div className="w-72 ">
-                      <img src={scene.videoUrl} />
+                      <img src={getVideoUrl(scene.videoUrlOrImageFile)} />
                     </div>
                   )}
                   <SceneTimer
@@ -70,7 +111,8 @@ const Storyboard: React.FC = () => {
               );
             })}
           </div>
-          <VideoGenerator scenes={scenes} audioFile={audioFile} />
+          <button onClick={handleGenerateVideo}>Generate Video</button>
+          {/* <VideoGenerator scenes={scenes} audioFile={audioFile} /> */}
         </div>
       </div>
     </NoSSRWrapper>

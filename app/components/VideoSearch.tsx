@@ -40,7 +40,7 @@ const VideoSearch: React.FC<VideoSearchProps> = ({ scenes, updateScene }) => {
   const handleAssociateVideo = (sceneIndex: number, videoUrl: string) => {
     const updatedScene: Scene = {
       ...scenes[sceneIndex],
-      videoUrl,
+      videoUrlOrImageFile: videoUrl,
     };
     updateScene(sceneIndex, updatedScene);
   };

@@ -14,14 +14,11 @@ const TextInput: React.FC<TextInputProps> = ({ updateScenes, speechRate }) => {
 
   useEffect(() => {
     const scenes: Scene[] = paragraphs.map((paragraph, index) => {
-      const startTime = 0;
       const duration = calculateSceneDuration(paragraph, speechRate);
-      const endTime = startTime + duration;
       return {
         paragraph,
-        startTime,
-        endTime,
-        videoUrl: "",
+        videoUrlOrImageFile: "",
+        duration,
       };
     });
     updateScenes(scenes);

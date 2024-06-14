@@ -1,12 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Scene } from "../utils/interfaces";
-import generateVideoFromImage from "../utils/timing";
-import { FFmpeg } from "@ffmpeg/ffmpeg";
-import { fetchFile, toBlobURL } from "@ffmpeg/util";
 
 interface UploadImagesProps {
   scenes: Scene[];
-  onAddScene: (index: number, video: string) => void;
+  onAddScene: (index: number, video: string | File) => void;
 }
 
 const UploadImages: React.FC<UploadImagesProps> = ({ onAddScene, scenes }) => {
@@ -15,40 +12,6 @@ const UploadImages: React.FC<UploadImagesProps> = ({ onAddScene, scenes }) => {
   const [url, setUrl] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [progressMessage, setProgressMessage] = useState<string | null>(null);
-  const [ffmpeg, setFfmpeg] = useState<FFmpeg | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const messageRef = useRef<HTMLParagraphElement | null>(null);
-  const [loaded, setLoaded] = useState(false);
-
-  const ffmpegRef = useRef(new FFmpeg());
-
-  const load = async () => {
-    setIsLoading(true);
-    setProgressMessage("Loading FFmpeg...");
-    const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
-    const ffmpeg = ffmpegRef.current;
-    ffmpeg.on("log", ({ message }: { message: string }) => {
-      if (messageRef.current) {
-        messageRef.current.innerText += message;
-      }
-    });
-    await ffmpeg.load({
-      coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, "text/javascript"),
-      wasmURL: await toBlobURL(
-        `${baseURL}/ffmpeg-core.wasm`,
-        "application/wasm"
-      ),
-    });
-
-    setFfmpeg(ffmpeg);
-    setLoaded(true);
-    setIsLoading(false);
-    setProgressMessage(null);
-  };
-
-  useEffect(() => {
-    load();
-  }, []);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newImages = Array.from(event.target.files || []);
@@ -77,24 +40,7 @@ const UploadImages: React.FC<UploadImagesProps> = ({ onAddScene, scenes }) => {
   };
 
   const handleAssociateWithScene = async (sceneIndex: number, image: File) => {
-    setIsLoading(true);
-    setProgressMessage("Generating video...");
-    try {
-      const duration = scenes[sceneIndex].endTime;
-      const videoUrl = await generateVideoFromImage(
-        ffmpeg as FFmpeg,
-
-        image,
-        duration
-      );
-      onAddScene(sceneIndex, videoUrl as string);
-    } catch (error) {
-      console.error("Error generating video:", error);
-      setErrorMessage(`Failed to generate video from image: ${error}`);
-    } finally {
-      setIsLoading(false);
-      setProgressMessage(null);
-    }
+    onAddScene(sceneIndex, image);
   };
 
   return (
@@ -145,7 +91,6 @@ const UploadImages: React.FC<UploadImagesProps> = ({ onAddScene, scenes }) => {
         ))}
       </div>
       <p className="progress-message">{progressMessage}</p>
-      {isLoading && <p className="progress-message">Generating video...</p>}
     </div>
   );
 };
