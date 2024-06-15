@@ -1,14 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Scene, Video } from "../utils/interfaces";
+import { freeVideos } from "../utils/freeVideos";
 
 interface VideoSearchProps {
   scenes: Scene[];
-  updateScene: (index: number, updatedScene: Scene) => void;
+  onAddScene: (sceneIndex: number, image: string | File) => void;
+  selectedSene: Scene;
+  sceneIndex: number;
 }
 
-const VideoSearch: React.FC<VideoSearchProps> = ({ scenes, updateScene }) => {
+const VideoSearch: React.FC<VideoSearchProps> = ({
+  scenes,
+  onAddScene,
+  selectedSene,
+  sceneIndex,
+}) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<Video[]>([]);
+  const [searchResults, setSearchResults] = useState<Video[]>(freeVideos);
+  const cloudinaryVideosRef = useRef<Video[]>([]);
 
   console.log({ searchResults });
   const handleSearch = async (query: string) => {
@@ -37,13 +46,38 @@ const VideoSearch: React.FC<VideoSearchProps> = ({ scenes, updateScene }) => {
     }
   };
 
-  const handleAssociateVideo = (sceneIndex: number, videoUrl: string) => {
-    const updatedScene: Scene = {
-      ...scenes[sceneIndex],
-      videoUrlOrImageFile: videoUrl,
+  // Fetch videos from Cloudinary when the component mounts
+  useEffect(() => {
+    const fetchCloudinaryVideos = async () => {
+      if (cloudinaryVideosRef.current.length > 0) {
+        // If videos are already fetched, use the cached result
+        setSearchResults(cloudinaryVideosRef.current);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/cloudinary-videos"
+        );
+        const data = await response.json();
+        console.log({ data });
+        /*   const videoResults = data.resources.map((video: any) => ({
+          id: video.asset_id,
+          duration: video.duration,
+          url: video.secure_url,
+          title: video.public_id,
+          thumbnail: video.secure_url, // Cloudinary can generate thumbnails, adjust as needed
+        })); */
+
+        cloudinaryVideosRef.current = data;
+        setSearchResults(data);
+      } catch (error) {
+        console.error("Error fetching videos from Cloudinary:", error);
+      }
     };
-    updateScene(sceneIndex, updatedScene);
-  };
+
+    fetchCloudinaryVideos();
+  }, []);
 
   return (
     <div>
@@ -61,29 +95,21 @@ const VideoSearch: React.FC<VideoSearchProps> = ({ scenes, updateScene }) => {
         Search
       </button>
 
-      <div className="mt-4 flex flex-wrap overflow-y-auto h-96 scroll-auto text-gray-500">
-        {searchResults.map((video) => (
+      <div className="mt-4 flex flex-wrap overflow-y-auto  gap-x-3  scroll-auto text-gray-500">
+        {searchResults.map((video, i) => (
           <div
-            className="flex flex-col items-center w-52 text-sm "
-            key={video.id}
+            className="flex flex-col flex-wrap w-52 items-center text-sm "
+            key={i}
+            onClick={() => onAddScene(sceneIndex, video.url)}
           >
-            <div className="w-52 h-52">
+            <div className="">
               <img
                 src={video.thumbnail}
                 alt={video.title}
-                className="w-52 h-52"
+                className="w-full h-32 object-cover"
               />
             </div>
             <span className="w-10 bg-red-700 text-white">{video.duration}</span>
-            <h3 className=" w-52">{video.title}</h3>
-            {scenes.map((scene, index) => (
-              <button
-                key={index}
-                onClick={() => handleAssociateVideo(index, video.url)}
-              >
-                Associate with Scene {index + 1}
-              </button>
-            ))}
           </div>
         ))}
       </div>

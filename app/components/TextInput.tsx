@@ -6,10 +6,16 @@ import { splitTextIntoParagraphs } from "../utils/text";
 interface TextInputProps {
   updateScenes: (scenes: Scene[]) => void;
   speechRate: number;
+  setText: (text: string) => void;
+  text: string;
 }
 
-const TextInput: React.FC<TextInputProps> = ({ updateScenes, speechRate }) => {
-  const [text, setText] = useState("");
+const TextInput: React.FC<TextInputProps> = ({
+  updateScenes,
+  speechRate,
+  setText,
+  text,
+}) => {
   const [paragraphs, setParagraphs] = useState<string[]>([]);
 
   useEffect(() => {
@@ -31,9 +37,9 @@ const TextInput: React.FC<TextInputProps> = ({ updateScenes, speechRate }) => {
   };
 
   return (
-    <div>
+    <div className="w-full">
       <textarea
-        className="w-full h-full px-4"
+        className=" text-gray-800 w-full h-full px-4"
         value={text}
         onChange={handleTextChange}
         rows={10}

@@ -17,12 +17,14 @@ const SceneTimer = ({
   }, [paragraph, speechRate, startTime]);
 
   return (
-    <div className="text-gray-500 border-b-2 ">
-      <p>{paragraph}</p>
-      <p>
-        Start Time: {startTime.toFixed(2)} seconds | End Time:{" "}
-        {endTime.toFixed(2)} seconds
+    <div className="text-gray-800 ">
+      <p
+        className="text-wrap p-3 text-[3px] line-clamp-3 w-24 bg-slate-300  "
+        style={{ whiteSpace: "pre-wrap", lineHeight: "1.5" }}
+      >
+        {paragraph}
       </p>
+      <p>{endTime.toFixed(2)} seconds</p>
     </div>
   );
 };

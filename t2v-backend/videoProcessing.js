@@ -59,13 +59,10 @@ const processImage = async (imageFilePath, sceneVideoPath, duration) => {
 
   await new Promise((resolve, reject) => {
     const command = ffmpeg(imageFilePath)
-      .inputOptions(["-loop 1"])
-      .duration(duration)
-      .outputOptions(["-vcodec", "libx264"])
-      .complexFilter([
-        `[0:v]scale=${outputWidth * 2}:${
-          outputHeight * 2
-        },boxblur=luma_radius=${lumaRadius}:luma_power=1:chroma_radius=${chromaRadius}:chroma_power=1[bg];[0:v]scale=-1:${outputHeight}[ov];[bg][ov]overlay=(W-w)/2:(H-h)/2,crop=w=${outputWidth}:h=${outputHeight}`,
+      .input(imageFilePath)
+      .outputOptions([
+        "-vf",
+        `scale=1280:720:force_original_aspect_ratio=decrease:flags=fast_bilinear,split[original][copy];[copy]scale=32:18:force_original_aspect_ratio=increase:flags=fast_bilinear,gblur=sigma=2,scale=1280:720:flags=fast_bilinear[blurred];[blurred][original]overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2,setsar=1`,
       ])
       .output(sceneVideoPath)
       .on("end", resolve)

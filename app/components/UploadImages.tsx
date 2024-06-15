@@ -3,11 +3,20 @@ import { Scene } from "../utils/interfaces";
 
 interface UploadImagesProps {
   scenes: Scene[];
-  onAddScene: (index: number, video: string | File) => void;
+  onAddScene: (sceneIndex: number, image: string | File) => void;
+  images: File[];
+  setImages: (images: File[]) => void;
+  selectedSene: Scene;
+  sceneIndex: number; // Add this line
 }
 
-const UploadImages: React.FC<UploadImagesProps> = ({ onAddScene, scenes }) => {
-  const [images, setImages] = useState<File[]>([]);
+const UploadImages: React.FC<UploadImagesProps> = ({
+  onAddScene,
+  scenes,
+  images,
+  setImages,
+  sceneIndex,
+}) => {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [url, setUrl] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -24,7 +33,7 @@ const UploadImages: React.FC<UploadImagesProps> = ({ onAddScene, scenes }) => {
       return;
     }
 
-    setImages((prevImages) => [...prevImages, ...newImages]);
+    setImages([...images, ...newImages]);
     setErrorMessage(null);
   };
 
@@ -37,10 +46,6 @@ const UploadImages: React.FC<UploadImagesProps> = ({ onAddScene, scenes }) => {
     setImageUrls((prevUrls) => [...prevUrls, url]);
     setUrl("");
     setErrorMessage(null);
-  };
-
-  const handleAssociateWithScene = async (sceneIndex: number, image: File) => {
-    onAddScene(sceneIndex, image);
   };
 
   return (
@@ -63,32 +68,20 @@ const UploadImages: React.FC<UploadImagesProps> = ({ onAddScene, scenes }) => {
       </div>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
       <div className="image-list">
-        {images.map((image, index) => (
-          <div key={index} className="image-item">
-            <img src={URL.createObjectURL(image)} alt={`Image ${index + 1}`} />
-            {scenes.map((scene, sceneIndex) => (
-              <button
-                key={sceneIndex}
-                onClick={() => handleAssociateWithScene(sceneIndex, image)}
-              >
-                Associate with Scene {sceneIndex + 1}
-              </button>
-            ))}
-          </div>
-        ))}
-        {imageUrls.map((imageUrl, index) => (
-          <div key={index} className="image-item">
-            <img src={imageUrl} alt={`Image URL ${index + 1}`} />
-            {scenes.map((scene, sceneIndex) => (
-              <button
-                key={sceneIndex}
-                onClick={() => onAddScene(sceneIndex, imageUrl)}
-              >
-                Associate with Scene {sceneIndex + 1}
-              </button>
-            ))}
-          </div>
-        ))}
+        <div className="flex flex-wrap gap-2">
+          {images.map((image, index) => (
+            <div
+              key={index}
+              className="image-item w-40"
+              onClick={() => onAddScene(sceneIndex, image)}
+            >
+              <img
+                src={URL.createObjectURL(image)}
+                alt={`Image ${index + 1}`}
+              />
+            </div>
+          ))}
+        </div>
       </div>
       <p className="progress-message">{progressMessage}</p>
     </div>
