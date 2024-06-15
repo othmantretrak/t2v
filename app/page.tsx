@@ -200,6 +200,7 @@ const Storyboard: React.FC = () => {
           </div>
         </div>
       </div>
+      <button onClick={handleGenerateVideo}>Generate Video</button>
     </div>
   );
 };
