@@ -3,6 +3,8 @@
 # dependencies
 /node_modules
 node_modules
+t2v-backend 
+/t2v-backend
 /.pnp
 .pnp.js
 .yarn/install-state.gz

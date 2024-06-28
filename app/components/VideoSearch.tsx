@@ -57,7 +57,7 @@ const VideoSearch: React.FC<VideoSearchProps> = ({
 
       try {
         const response = await fetch(
-          "http://localhost:5000/api/cloudinary-videos"
+          "https://t2v-express.onrender.com/api/cloudinary-videos"
         );
         const data = await response.json();
         console.log({ data });

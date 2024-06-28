@@ -49,6 +49,7 @@ const Storyboard: React.FC = () => {
     setSelectedSene(updatedScene); // Update selected scene
   };
   const handleGenerateVideo = async () => {
+    console.log("Generating video...");
     // Create a FormData instance
     const formData = new FormData();
 
@@ -69,17 +70,20 @@ const Storyboard: React.FC = () => {
 
     try {
       // Send FormData to backend using fetch API
-      const response = await fetch("http://localhost:5000/merge-videos", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "https://t2v-express.onrender.com/merge-videos",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Error generating video");
       }
 
       const responseData = await response.json();
-      console.log("Merged video URL:", responseData.videoUrlOrImageFile);
+      console.log("Merged video URL:", responseData.videoUrl);
 
       // Handle successful response (e.g., display generated video URL)
       // ...
