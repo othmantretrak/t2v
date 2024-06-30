@@ -97,7 +97,7 @@ const Storyboard: React.FC = () => {
   const pollVideoStatus = async (statusUrl: string) => {
     const pollInterval = setInterval(async () => {
       try {
-        const response = await fetch(statusUrl);
+        const response = await fetch(statusUrl.replace("http", "https"));
         const data = await response.json();
 
         if (data.status === "completed") {
