@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Scene, Video } from "../utils/interfaces";
 import { freeVideos } from "../utils/freeVideos";
+import { siteUrl } from "../utils/constants";
 
 interface VideoSearchProps {
   scenes: Scene[];
@@ -56,9 +57,7 @@ const VideoSearch: React.FC<VideoSearchProps> = ({
       }
 
       try {
-        const response = await fetch(
-          "https://t2v-express.onrender.com/api/cloudinary-videos"
-        );
+        const response = await fetch(`${siteUrl}/api/cloudinary-videos`);
         const data = await response.json();
         console.log({ data });
         /*   const videoResults = data.resources.map((video: any) => ({

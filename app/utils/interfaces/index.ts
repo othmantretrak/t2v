@@ -11,4 +11,5 @@ export interface Scene {
     paragraph: string;
     videoUrlOrImageFile: string | File
     duration: number;
+    imageFileName?: string;
 }

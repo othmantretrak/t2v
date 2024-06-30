@@ -8,6 +8,7 @@ import SceneTimer from "./components/SceneTimer";
 import NoSSRWrapper from "./components/NoSSRWrapper";
 import UploadImages from "./components/UploadImages";
 import { getVideoUrl, isImageUrl } from "./utils/timing";
+import { siteUrl } from "./utils/constants";
 
 const Storyboard: React.FC = () => {
   const speechRate = 145; // Words per minute
@@ -30,18 +31,14 @@ const Storyboard: React.FC = () => {
     "TextInput" | "AudioUpload" | "UploadImages" | "VideoSearch"
   >("TextInput");
 
-  const updateScene = (index: number, updatedScene: Scene) => {
-    const updatedScenes = [...scenes];
-    updatedScenes[index] = updatedScene;
-    setScenes(updatedScenes);
-  };
-
   console.log({ scenes });
 
   const handleAddScene = (index: number, imageUrl: string | File) => {
     const updatedScene: Scene = {
       ...selectedSene,
       videoUrlOrImageFile: imageUrl,
+      imageFileName:
+        imageUrl instanceof File ? `imageFile-${index}` : undefined,
     };
     const updatedScenes = [...scenes];
     updatedScenes[index] = updatedScene;
@@ -70,20 +67,23 @@ const Storyboard: React.FC = () => {
 
     try {
       // Send FormData to backend using fetch API
-      const response = await fetch(
-        "https://t2v-express.onrender.com/merge-videos",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const response = await fetch(`${siteUrl}/merge-videos`, {
+        method: "POST",
+        body: formData,
+      });
 
       if (!response.ok) {
         throw new Error("Error generating video");
       }
 
       const responseData = await response.json();
-      console.log("Merged video URL:", responseData.videoUrl);
+      console.log(
+        "Video generation started. URL will be available at:",
+        responseData.statusUrl
+      );
+
+      // Start polling for video status
+      pollVideoStatus(responseData.statusUrl);
 
       // Handle successful response (e.g., display generated video URL)
       // ...
@@ -92,6 +92,29 @@ const Storyboard: React.FC = () => {
       // Handle errors (e.g., display error message)
       // ...
     }
+  };
+
+  const pollVideoStatus = async (statusUrl: string) => {
+    const pollInterval = setInterval(async () => {
+      try {
+        const response = await fetch(statusUrl);
+        const data = await response.json();
+
+        if (data.status === "completed") {
+          clearInterval(pollInterval);
+          console.log("Merged video URL:", data.videoUrl);
+          // Handle completed video (e.g., display it to the user)
+        } else if (data.status === "failed") {
+          clearInterval(pollInterval);
+          console.error("Video generation failed:", data.error);
+          // Handle error
+        }
+        // If status is 'processing', continue polling
+      } catch (error) {
+        console.error("Error polling video status:", error);
+        clearInterval(pollInterval);
+      }
+    }, 5000); // Poll every 5 seconds
   };
   return (
     <div className="flex  w-screen h-screen text-gray-800">
