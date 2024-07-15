@@ -35,6 +35,9 @@ dependencies:
   sharp:
     specifier: ^0.33.4
     version: 0.33.4
+  uuid:
+    specifier: ^10.0.0
+    version: 10.0.0
 
 packages:
 
@@ -1271,6 +1274,11 @@ packages:
   /utils-merge@1.0.1:
     resolution: {integrity: sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=}
     engines: {node: '>= 0.4.0'}
+    dev: false
+
+  /uuid@10.0.0:
+    resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
+    hasBin: true
     dev: false
 
   /vary@1.1.2:
